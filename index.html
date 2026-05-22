@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mila Valiz — Keyfiyyətli Çantalar</title>
+  <meta name="description" content="Mila Valiz — Bakıda keyfiyyətli çantalar."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --cream: #F5F0E8; --taupe: #B89A78; --dark: #1E1810;
+      --mid: #7A6A56; --light-mid: #A89880; --border: #DDD5C8; --white: #FAFAF7;
+    }
+    body { font-family: 'Jost', sans-serif; background: var(--white); color: var(--dark); font-weight: 300; }
+    .page { display: block; } .page.hidden { display: none; }
+
+    .nav { position: sticky; top: 0; z-index: 200; display: flex; justify-content: space-between; align-items: center; padding: 14px 40px; background: var(--white); border-bottom: 0.5px solid var(--border); }
+    .nav-side { width: 90px; display: flex; align-items: center; }
+    .nav-logo { display: flex; flex-direction: column; align-items: center; }
+    .nav-logo img.real-logo { height: 72px; width: auto; object-fit: contain; display: block; }
+    .logo-fallback { display: none; flex-direction: column; align-items: center; gap: 2px; }
+    .logo-fallback .lf-m { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 400; letter-spacing: 2px; color: var(--dark); line-height: 1; }
+    .logo-fallback .lf-sub { font-size: 8px; letter-spacing: 6px; color: var(--dark); }
+    .nav-right { justify-content: flex-end; gap: 12px; }
+    .lang-btn { font-size: 11px; letter-spacing: 2px; color: var(--light-mid); cursor: pointer; background: none; border: none; font-family: 'Jost', sans-serif; font-weight: 400; padding: 2px 0; }
+    .lang-btn.active { color: var(--dark); border-bottom: 0.5px solid var(--dark); }
+    .back-btn { font-size: 11px; letter-spacing: 2px; color: var(--mid); cursor: pointer; background: none; border: none; font-family: 'Jost', sans-serif; font-weight: 300; }
+    .back-btn:hover { color: var(--dark); }
+
+    .hero { background: var(--cream); padding: 52px 40px 44px; text-align: center; border-bottom: 0.5px solid var(--border); }
+    .hero-tag { font-size: 9px; letter-spacing: 6px; color: var(--taupe); margin-bottom: 14px; }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 400; letter-spacing: 10px; color: var(--dark); margin-bottom: 14px; }
+    .hero-line { width: 48px; height: 0.5px; background: var(--taupe); margin: 0 auto 14px; }
+    .hero-sub { font-size: 11px; letter-spacing: 3px; color: var(--mid); }
+
+    .filters-wrap { background: var(--white); border-bottom: 0.5px solid var(--border); padding: 0 32px; }
+    .filters-inner { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+    .filters-inner::-webkit-scrollbar { display: none; }
+    .filter-group { display: flex; flex-direction: column; padding: 16px 24px 16px 0; min-width: fit-content; border-right: 0.5px solid var(--border); margin-right: 24px; }
+    .filter-group:last-child { border-right: none; }
+    .filter-group-label { font-size: 8px; letter-spacing: 3px; color: var(--light-mid); margin-bottom: 10px; white-space: nowrap; }
+    .filter-chips { display: flex; gap: 6px; flex-wrap: nowrap; }
+    .chip { font-size: 10px; letter-spacing: 1px; padding: 5px 12px; border: 0.5px solid var(--border); cursor: pointer; background: transparent; color: var(--mid); font-family: 'Jost', sans-serif; font-weight: 300; white-space: nowrap; transition: all 0.15s; border-radius: 1px; }
+    .chip:hover { border-color: var(--dark); color: var(--dark); }
+    .chip.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+    .chip.color-chip { display: flex; align-items: center; gap: 6px; }
+    .color-dot { width: 10px; height: 10px; border-radius: 50%; border: 0.5px solid rgba(0,0,0,0.15); flex-shrink: 0; }
+
+    .results-bar { padding: 12px 32px; display: flex; justify-content: space-between; align-items: center; }
+    .results-count { font-size: 10px; letter-spacing: 2px; color: var(--light-mid); }
+    .clear-btn { font-size: 10px; letter-spacing: 1px; color: var(--taupe); cursor: pointer; background: none; border: none; font-family: 'Jost', sans-serif; display: none; }
+    .clear-btn.visible { display: block; }
+
+    .products-section { padding: 8px 32px 60px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+    .no-results { text-align: center; padding: 60px 20px; font-size: 12px; letter-spacing: 2px; color: var(--light-mid); display: none; }
+    .no-results.visible { display: block; }
+
+    .card { background: #fff; border: 0.5px solid var(--border); border-radius: 1px; overflow: hidden; cursor: pointer; transition: box-shadow 0.2s; }
+    .card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+    .card:hover .card-img img { transform: scale(1.04); }
+    .card-img { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: var(--cream); }
+    .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .card-body { padding: 14px 15px 17px; }
+    .badge { display: inline-block; font-size: 8px; letter-spacing: 2px; padding: 3px 9px; margin-bottom: 8px; }
+    .badge-new { background: var(--dark); color: #fff; }
+    .badge-sale { background: var(--taupe); color: #fff; }
+    .card-name { font-size: 12px; color: var(--dark); margin-bottom: 6px; line-height: 1.6; }
+    .card-price { font-size: 14px; color: var(--dark); font-weight: 400; }
+    .card-price .old { font-size: 11px; color: var(--light-mid); text-decoration: line-through; margin-left: 6px; font-weight: 300; }
+
+    .product-section { padding: 40px 32px 60px; max-width: 960px; margin: 0 auto; }
+    .product-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: start; }
+    .product-imgs { display: flex; flex-direction: column; gap: 10px; }
+    .main-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: var(--cream); border: 0.5px solid var(--border); }
+    .main-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumb-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .thumb { width: 68px; height: 68px; object-fit: cover; border: 0.5px solid var(--border); cursor: pointer; opacity: 0.6; transition: opacity 0.2s; }
+    .thumb.active, .thumb:hover { opacity: 1; border-color: var(--dark); }
+    .product-info { padding-top: 4px; }
+    .product-badge { display: inline-block; font-size: 8px; letter-spacing: 2px; padding: 3px 10px; margin-bottom: 16px; }
+    .product-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--dark); margin-bottom: 14px; line-height: 1.5; }
+    .product-price { font-size: 22px; color: var(--dark); margin-bottom: 5px; font-weight: 400; }
+    .product-price .old { font-size: 15px; color: var(--light-mid); text-decoration: line-through; margin-left: 8px; font-weight: 300; }
+    .product-credit { font-size: 11px; color: var(--mid); margin-bottom: 26px; letter-spacing: 0.5px; }
+    .divider { height: 0.5px; background: var(--border); margin: 22px 0; }
+    .buy-label { font-size: 9px; letter-spacing: 4px; color: var(--light-mid); margin-bottom: 14px; }
+    .btn-group { display: flex; flex-direction: column; gap: 10px; }
+    .btn { display: block; text-align: center; padding: 14px 16px; font-size: 11px; letter-spacing: 2.5px; cursor: pointer; text-decoration: none; border: 0.5px solid; font-family: 'Jost', sans-serif; font-weight: 400; transition: background 0.2s; }
+    .btn-primary { background: var(--dark); color: #fff; border-color: var(--dark); }
+    .btn-primary:hover { background: #3a2e1e; }
+    .btn-secondary { background: transparent; color: var(--mid); border-color: #C4B8A8; }
+    .btn-secondary:hover { background: var(--cream); }
+    .product-detail { margin-top: 20px; font-size: 12px; color: var(--mid); line-height: 2; letter-spacing: 0.5px; }
+    .footer { padding: 28px 40px; border-top: 0.5px solid var(--border); background: var(--cream); text-align: center; font-size: 9px; letter-spacing: 4px; color: var(--light-mid); }
+
+    @media (max-width: 640px) {
+      .nav { padding: 10px 16px; } .nav-side { width: 60px; }
+      .nav-logo img.real-logo { height: 56px; }
+      .hero { padding: 36px 20px 30px; }
+      .filters-wrap { padding: 0 16px; }
+      .results-bar, .products-section { padding-left: 16px; padding-right: 16px; }
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .product-section { padding: 20px 16px 48px; }
+      .product-layout { grid-template-columns: 1fr; gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="home-page" class="page">
+  <nav class="nav">
+    <div class="nav-side"></div>
+    <div class="nav-logo" id="logo-home"></div>
+    <div class="nav-side nav-right" style="display:flex;">
+      <button class="lang-btn active" onclick="setLang('az')">AZ</button>
+      <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-tag" data-az="YENİ KOLLEKSİYA · 2026" data-ru="НОВАЯ КОЛЛЕКЦИЯ · 2026">YENİ KOLLEKSİYA · 2026</div>
+    <div class="hero-title">MİLA VALİZ</div>
+    <div class="hero-line"></div>
+    <div class="hero-sub" data-az="Keyfiyyətli çantalar · Bakı" data-ru="Качественные сумки · Баку">Keyfiyyətli çantalar · Bakı</div>
+  </section>
+
+  <div class="filters-wrap">
+    <div class="filters-inner">
+      <div class="filter-group">
+        <div class="filter-group-label" data-az="ÇEŞİD" data-ru="ВИД">ÇEŞİD</div>
+        <div class="filter-chips">
+          <button class="chip active" data-filter="type" data-value="all" data-az="Hamısı" data-ru="Все">Hamısı</button>
+          <button class="chip" data-filter="type" data-value="bel" data-az="Bel çantası" data-ru="Рюкзак">Bel çantası</button>
+          <button class="chip" data-filter="type" data-value="el" data-az="Əl çantası" data-ru="Ручная сумка">Əl çantası</button>
+          <button class="chip" data-filter="type" data-value="mekteb" data-az="Məktəbli" data-ru="Школьный">Məktəbli</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-group-label" data-az="STATUS" data-ru="СТАТУС">STATUS</div>
+        <div class="filter-chips">
+          <button class="chip" data-filter="status" data-value="new" data-az="Yenilik" data-ru="Новинка">Yenilik</button>
+          <button class="chip" data-filter="status" data-value="sale" data-az="Endirim" data-ru="Скидка">Endirim</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-group-label" data-az="QİYMƏT (₼)" data-ru="ЦЕНА (₼)">QİYMƏT (₼)</div>
+        <div class="filter-chips" style="align-items:center; gap:8px;">
+          <input type="number" id="price-min" placeholder="Min" min="0" max="999"
+            style="width:64px; padding:5px 8px; border:0.5px solid var(--border); background:transparent; font-family:'Jost',sans-serif; font-size:11px; color:var(--dark); outline:none; border-radius:1px; -moz-appearance:textfield;"
+            oninput="applyPriceFilter()"/>
+          <span style="font-size:11px; color:var(--light-mid);">—</span>
+          <input type="number" id="price-max" placeholder="Max" min="0" max="999"
+            style="width:64px; padding:5px 8px; border:0.5px solid var(--border); background:transparent; font-family:'Jost',sans-serif; font-size:11px; color:var(--dark); outline:none; border-radius:1px; -moz-appearance:textfield;"
+            oninput="applyPriceFilter()"/>
+          <button id="price-clear" onclick="clearPriceFilter()" style="display:none; background:none; border:none; font-size:16px; color:var(--light-mid); cursor:pointer; line-height:1; padding:0 2px;">×</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-group-label" data-az="RƏNG" data-ru="ЦВЕТ">RƏNG</div>
+        <div class="filter-chips">
+          <button class="chip active" data-filter="color" data-value="all" data-az="Hamısı" data-ru="Все">Hamısı</button>
+          <button class="chip color-chip" data-filter="color" data-value="qara"><span class="color-dot" style="background:#1a1a1a"></span><span data-az="Qara" data-ru="Чёрный">Qara</span></button>
+          <button class="chip color-chip" data-filter="color" data-value="bej"><span class="color-dot" style="background:#C4A882"></span><span data-az="Bej" data-ru="Бежевый">Bej</span></button>
+          <button class="chip color-chip" data-filter="color" data-value="boz"><span class="color-dot" style="background:#9E9E9E"></span><span data-az="Boz" data-ru="Серый">Boz</span></button>
+          <button class="chip color-chip" data-filter="color" data-value="mavi"><span class="color-dot" style="background:#5B8DB8"></span><span data-az="Mavi" data-ru="Синий">Mavi</span></button>
+          <button class="chip color-chip" data-filter="color" data-value="yasil"><span class="color-dot" style="background:#6B9E6B"></span><span data-az="Yaşıl" data-ru="Зелёный">Yaşıl</span></button>
+          <button class="chip color-chip" data-filter="color" data-value="chehrayi"><span class="color-dot" style="background:#E8A0A0"></span><span data-az="Çəhrayı" data-ru="Розовый">Çəhrayı</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-bar">
+    <div class="results-count" id="results-count"></div>
+    <button class="clear-btn" id="clear-btn" onclick="clearFilters()">Filtrləri sıfırla</button>
+  </div>
+
+  <section class="products-section">
+    <div class="grid" id="product-grid"></div>
+    <div class="no-results" id="no-results">Heç bir məhsul tapılmadı</div>
+  </section>
+
+  <footer class="footer">© 2026 MİLA VALİZ · BAKI · BÜTÜN HÜQUQLAR QORUNUR</footer>
+</div>
+
+<div id="product-page" class="page hidden">
+  <nav class="nav">
+    <div class="nav-side">
+      <button class="back-btn" onclick="goHome()">← <span data-az="Geri" data-ru="Назад">Geri</span></button>
+    </div>
+    <div class="nav-logo" id="logo-product"></div>
+    <div class="nav-side nav-right" style="display:flex;">
+      <button class="lang-btn active" onclick="setLang('az')">AZ</button>
+      <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    </div>
+  </nav>
+  <section class="product-section">
+    <div class="product-layout">
+      <div class="product-imgs">
+        <div class="main-img-wrap"><img id="prod-main-img" src="" alt="məhsul"/></div>
+        <div class="thumb-row" id="thumb-row"></div>
+      </div>
+      <div class="product-info">
+        <span class="product-badge" id="prod-badge"></span>
+        <div class="product-name" id="prod-name"></div>
+        <div class="product-price" id="prod-price"></div>
+        <div class="product-credit" id="prod-credit"></div>
+        <div class="divider"></div>
+        <div class="buy-label" data-az="SATIN ALMA ÜSULU" data-ru="СПОСОБ ПОКУПКИ">SATIN ALMA ÜSULU</div>
+        <div class="btn-group">
+          <a class="btn btn-primary" id="prod-birmarket" href="#" target="_blank">
+            <span data-az="Birmarket-dən onlayn al" data-ru="Купить онлайн на Birmarket">Birmarket-dən onlayn al</span>
+          </a>
+          <a class="btn btn-secondary" id="prod-whatsapp" href="#" target="_blank">
+            <span data-az="Mağaza ilə əlaqə" data-ru="Связаться с магазином">Mağaza ilə əlaqə</span>
+          </a>
+        </div>
+        <div class="product-detail" id="prod-detail"></div>
+      </div>
+    </div>
+  </section>
+  <footer class="footer">© 2026 MİLA VALİZ · BAKI</footer>
+</div>
+
+<script>
+const CDN = 'https://strgimgr.b-cdn.net/img/product/';
+let currentLang = 'az';
+let activeFilters = { type:'all', status:null, priceMin:null, priceMax:null, color:'all' };
+
+const LOGO_HTML = '<img class="real-logo" src="logo.png" alt="Mila Valiz" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"/><div class="logo-fallback"><span class="lf-m">M</span><span class="lf-sub">MİLA VALİZ</span></div>';
+document.getElementById('logo-home').innerHTML = LOGO_HTML;
+document.getElementById('logo-product').innerHTML = LOGO_HTML;
+
+const products = [
+  { name:{az:"Əl yükü çantası, parça/poliester, qara",ru:"Дорожная сумка, ткань/полиэстер, чёрная"}, price:28.90, old:null, badge:"new", type:"el", color:"qara", imgs:["40ffd801-ccf5-4ab7-bfda-e841ab8fc977","4d66103b-ac85-433c-8f6f-59193f50ccfa","ef8acefe-10c3-4de5-a846-74ada87a6aa7","c4117b99-f7c9-472d-a8b9-97fc36871339"], link:"https://birmarket.az/product/2102437-yol-chantasi-minamist-dizayn", detail:{az:"Material: parça / poliester · Rəng: qara",ru:"Материал: ткань / полиэстер · Цвет: чёрный"}, credit:"1.61 ₼ × 18 ay" },
+  { name:{az:"Bel çantası dəsti 3-ü 1-də, qara",ru:"Набор рюкзак 3-в-1, чёрный"}, price:18.90, old:"23.90 ₼", badge:"sale", type:"bel", color:"qara", imgs:["8cb39eb9-4f57-4f56-b608-f07e2483d768"], link:"https://birmarket.az/product/2102502-bel-chantasi-uchlu-chanta", detail:{az:"3-ü 1-də: bel + çiyin + qələm qabı",ru:"3-в-1: рюкзак + сумка + пенал"}, credit:"1.05 ₼ × 18 ay" },
+  { name:{az:"Məktəbli bel çantası 9295",ru:"Школьный рюкзак 9295"}, price:28.90, old:"37.90 ₼", badge:"sale", type:"mekteb", color:"qara", imgs:["51949fd9-d500-4cfa-8c06-86760b0de71a"], link:"https://birmarket.az/product/2139551-mektebli-bel-chantasi-nn", detail:{az:"Məktəblilər üçün davamlı bel çantası",ru:"Прочный школьный рюкзак"}, credit:"1.61 ₼ × 18 ay" },
+  { name:{az:"Məktəbli bel çantası 1925",ru:"Школьный рюкзак 1925"}, price:28.90, old:"36.90 ₼", badge:"sale", type:"mekteb", color:"qara", imgs:["dea83d86-de48-4a25-8cfe-2f4700cb287b"], link:"https://birmarket.az/product/2139569-chanta-bel-chantasi", detail:{az:"Məktəblilər üçün davamlı bel çantası",ru:"Прочный школьный рюкзак"}, credit:"1.61 ₼ × 18 ay" },
+  { name:{az:"Məktəbli bel çantası f0102t5, yaşıl",ru:"Школьный рюкзак f0102t5, зелёный"}, price:18.90, old:null, badge:"new", type:"mekteb", color:"yasil", imgs:["06febdee-0128-461b-b2e8-d61180402f98"], link:"https://birmarket.az/product/2007569-chanta-bel-chantasi", detail:{az:"Rəng: yaşıl · Material: parça/poliester",ru:"Цвет: зелёный · Материал: ткань/полиэстер"}, credit:"1.05 ₼ × 18 ay" },
+  { name:{az:"Bel çantası, 18.9 l, boz",ru:"Рюкзак, 18.9 л, серый"}, price:18.90, old:null, badge:"new", type:"bel", color:"boz", imgs:["0bc13dbd-5a37-476b-92fd-d728228c904a"], link:"https://birmarket.az/product/2102309-bel-chantasi-light-gray", detail:{az:"Həcm: 18.9 litr · Rəng: boz",ru:"Объём: 18.9 литра · Цвет: серый"}, credit:"1.05 ₼ × 18 ay" },
+  { name:{az:"Əl yükü çantası, parça, qara",ru:"Ручная сумка, ткань, чёрная"}, price:28.90, old:null, badge:"new", type:"el", color:"qara", imgs:["4011b51d-385b-417c-90cb-694eab557f3a","1f65d749-ee2a-464f-89a7-2621f0c7a834","35f87a10-a01e-4ed5-9750-eb4d836af18f"], link:"https://birmarket.az/product/2102334-yol-chantasi", detail:{az:"Material: parça · Rəng: qara",ru:"Материал: ткань · Цвет: чёрный"}, credit:"1.61 ₼ × 18 ay" },
+  { name:{az:"Bel çantası, 42x29x14 sm, bej",ru:"Рюкзак, 42x29x14 см, бежевый"}, price:28.90, old:null, badge:"new", type:"bel", color:"bej", imgs:["44eba4af-4d0f-4d69-a5e6-f0742d98d2b9"], link:"https://birmarket.az/product/2104148-bel-chantasi-universal", detail:{az:"Ölçü: 42×29×14 sm · Rəng: bej",ru:"Размер: 42×29×14 см · Цвет: бежевый"}, credit:"1.61 ₼ × 18 ay" },
+  { name:{az:"Bel çantası, 18.9 l, mavi",ru:"Рюкзак, 18.9 л, синий"}, price:18.90, old:null, badge:"new", type:"bel", color:"mavi", imgs:["b92d6983-c312-4638-a0bf-cae0743efbfd"], link:"https://birmarket.az/product/2102234-bel-chantasi-achiq-mavi", detail:{az:"Həcm: 18.9 litr · Rəng: mavi",ru:"Объём: 18.9 литра · Цвет: синий"}, credit:"1.05 ₼ × 18 ay" },
+  { name:{az:"Məktəbli bel çantası, çəhrayı, 27x38 sm",ru:"Школьный рюкзак, розовый, 27x38 см"}, price:18.90, old:"23.90 ₼", badge:"sale", type:"mekteb", color:"chehrayi", imgs:["c58da9b9-ccd9-4e03-b63a-453cb9c383be"], link:"https://birmarket.az/product/2101194-bel-chantasi-chanta", detail:{az:"Ölçü: 27×38 sm · Rəng: çəhrayı",ru:"Размер: 27×38 см · Цвет: розовый"}, credit:"1.05 ₼ × 18 ay" }
+];
+
+function buildGrid() {
+  const grid = document.getElementById('product-grid');
+  const noResults = document.getElementById('no-results');
+  const countEl = document.getElementById('results-count');
+  const clearBtn = document.getElementById('clear-btn');
+  grid.innerHTML = '';
+  const lang = currentLang;
+
+  const filtered = products.filter(p => {
+    if (activeFilters.type !== 'all' && p.type !== activeFilters.type) return false;
+    if (activeFilters.status && p.badge !== activeFilters.status) return false;
+    
+    if (activeFilters.priceMin !== null && p.price < activeFilters.priceMin) return false;
+    if (activeFilters.priceMax !== null && p.price > activeFilters.priceMax) return false;
+    if (activeFilters.color !== 'all' && p.color !== activeFilters.color) return false;
+    return true;
+  });
+
+  const hasActive = activeFilters.type!=='all' || activeFilters.status!==null || activeFilters.priceMin!==null || activeFilters.priceMax!==null || activeFilters.color!=='all';
+  clearBtn.classList.toggle('visible', hasActive);
+  clearBtn.textContent = lang==='az' ? 'Filtrləri sıfırla' : 'Сбросить фильтры';
+  countEl.textContent = lang==='az' ? `${filtered.length} məhsul` : `${filtered.length} товаров`;
+
+  if (filtered.length === 0) { noResults.classList.add('visible'); return; }
+  noResults.classList.remove('visible');
+  noResults.textContent = lang==='az' ? 'Heç bir məhsul tapılmadı' : 'Ничего не найдено';
+
+  filtered.forEach(p => {
+    const origIdx = products.indexOf(p);
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.onclick = () => openProduct(origIdx);
+    const badgeText = p.badge==='new' ? (lang==='az'?'YENİLİK':'НОВИНКА') : (lang==='az'?'ENDİRİM':'СКИДКА');
+    div.innerHTML = `
+      <div class="card-img"><img src="${CDN}840/${p.imgs[0]}.jpeg?quality=90" alt="çanta" loading="lazy"/></div>
+      <div class="card-body">
+        <span class="badge ${p.badge==='new'?'badge-new':'badge-sale'}">${badgeText}</span>
+        <div class="card-name">${p.name[lang]}</div>
+        <div class="card-price">${p.price.toFixed(2)} ₼${p.old?` <span class="old">${p.old}</span>`:''}</div>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const ft = chip.dataset.filter;
+    const val = chip.dataset.value;
+    if (ft === 'status') {
+      if (chip.classList.contains('active')) { chip.classList.remove('active'); activeFilters.status = null; }
+      else { document.querySelectorAll('[data-filter="status"]').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); activeFilters.status = val; }
+    } else {
+      document.querySelectorAll(`[data-filter="${ft}"]`).forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      activeFilters[ft] = val;
+    }
+    buildGrid();
+  });
+});
+
+function applyPriceFilter() {
+  const minVal = document.getElementById('price-min').value;
+  const maxVal = document.getElementById('price-max').value;
+  activeFilters.priceMin = minVal !== '' ? parseFloat(minVal) : null;
+  activeFilters.priceMax = maxVal !== '' ? parseFloat(maxVal) : null;
+  const clearBtn = document.getElementById('price-clear');
+  clearBtn.style.display = (activeFilters.priceMin !== null || activeFilters.priceMax !== null) ? 'block' : 'none';
+  buildGrid();
+}
+
+function clearPriceFilter() {
+  document.getElementById('price-min').value = '';
+  document.getElementById('price-max').value = '';
+  activeFilters.priceMin = null;
+  activeFilters.priceMax = null;
+  document.getElementById('price-clear').style.display = 'none';
+  buildGrid();
+}
+
+function clearFilters() {
+  activeFilters = { type:'all', status:null, priceMin:null, priceMax:null, color:'all' };
+  document.querySelectorAll('[data-filter="type"][data-value="all"]').forEach(c=>c.classList.add('active'));
+  document.querySelectorAll('[data-filter="color"][data-value="all"]').forEach(c=>c.classList.add('active'));
+  document.querySelectorAll('[data-filter="status"]').forEach(c=>c.classList.remove('active'));
+  document.getElementById('price-min').value = '';
+  document.getElementById('price-max').value = '';
+  document.getElementById('price-clear').style.display = 'none';
+  buildGrid();
+}
+
+function openProduct(i) {
+  const p = products[i];
+  const lang = currentLang;
+  const mainImg = document.getElementById('prod-main-img');
+  mainImg.src = `${CDN}840/${p.imgs[0]}.jpeg?quality=90`;
+  const thumbRow = document.getElementById('thumb-row');
+  thumbRow.innerHTML = '';
+  p.imgs.forEach((id, ti) => {
+    const t = document.createElement('img');
+    t.className = 'thumb'+(ti===0?' active':'');
+    t.src = `${CDN}280/${id}.jpeg?quality=80`;
+    t.onclick = () => { mainImg.src=`${CDN}840/${id}.jpeg?quality=90`; thumbRow.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active')); t.classList.add('active'); };
+    thumbRow.appendChild(t);
+  });
+  document.getElementById('prod-name').textContent = p.name[lang];
+  document.getElementById('prod-price').innerHTML = p.price.toFixed(2)+' ₼'+(p.old?` <span class="old">${p.old}</span>`:'');
+  document.getElementById('prod-credit').textContent = p.credit ? (lang==='az'?`və ya ${p.credit} (kredit)`:`или ${p.credit} (кредит)`) : '';
+  const badge = document.getElementById('prod-badge');
+  badge.textContent = p.badge==='new'?(lang==='az'?'YENİLİK':'НОВИНКА'):(lang==='az'?'ENDİRİM':'СКИДКА');
+  badge.className = 'product-badge '+(p.badge==='new'?'badge-new':'badge-sale');
+  document.getElementById('prod-birmarket').href = p.link;
+  document.getElementById('prod-whatsapp').href = `https://wa.me/9943430340?text=${encodeURIComponent('Salam! '+p.name.az+' məhsulu barədə məlumat almaq istəyirəm.')}`;
+  document.getElementById('prod-detail').textContent = p.detail[lang];
+  document.getElementById('home-page').classList.add('hidden');
+  document.getElementById('product-page').classList.remove('hidden');
+  window.scrollTo(0,0);
+  applyLangStatic();
+}
+
+function goHome() {
+  document.getElementById('product-page').classList.add('hidden');
+  document.getElementById('home-page').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.textContent.toLowerCase()===lang));
+  applyLangStatic();
+  buildGrid();
+}
+
+function applyLangStatic() {
+  const lang = currentLang;
+  document.querySelectorAll('[data-az]:not(.chip):not(.filter-group-label)').forEach(el => {
+    el.textContent = el.dataset[lang] || el.dataset.az;
+  });
+  document.querySelectorAll('.filter-group-label[data-az]').forEach(el => {
+    el.textContent = el.dataset[lang] || el.dataset.az;
+  });
+  document.querySelectorAll('.chip[data-az]').forEach(el => {
+    if (!el.querySelector('.color-dot')) el.textContent = el.dataset[lang] || el.dataset.az;
+  });
+}
+
+buildGrid();
+</script>
+</body>
+</html>
